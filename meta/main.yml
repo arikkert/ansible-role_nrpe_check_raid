@@ -1,5 +1,6 @@
 galaxy_info:
-  role: nrpe_check_raid
+  my_galaxy_namespace: arikkert
+  role_name: nrpe_check_raid
   author: Andre Rikkert de Koe
   description: nrpe check_raid on linux hosts
   company: ARK-ICT
