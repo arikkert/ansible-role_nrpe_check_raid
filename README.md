@@ -1,7 +1,7 @@
 Role Name
 =========
 
-Nagios NRPE fir checking RAID
+Nagios NRPE for checking RAID
 
 Requirements
 ------------
