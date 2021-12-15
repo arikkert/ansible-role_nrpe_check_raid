@@ -1,0 +1,33 @@
+---
+# tasks file for role_nrpe_check_raid
+
+- name: ensure check_raid is installed
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ nagios_plugins_dir }}/{{ item }}"
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - check_raid
+- name: ensure npre is configured
+  template:
+    src: check_raid.cfg.j2
+    dest: /etc/nrpe.d/check_raid.cfg
+    mode: 0644
+  notify: nrpe reload
+- name: ensure sudo rules are in place
+  template:
+    src: "{{ item }}.j2"
+    dest: /etc/sudoers.d/{{ item }}
+    mode: '0400'
+    validate: visudo -cf %s
+  loop:
+    - 20_nrpe
+- name: ensure selinux policy is applied - part 01
+  seboolean:
+    name: nagios_run_sudo
+    state: true
+    persistent: true
+
+...

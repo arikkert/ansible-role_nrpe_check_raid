@@ -1,0 +1,74 @@
+#!/usr/bin/bash
+# This file is managed by Ansible
+
+# check_raid ownership/permission:
+#  owner : root
+#  group : root
+#  perms : 0755
+#
+# sudo config:
+#  /etc/sudoers.d/nrpe:
+#   owner : root
+#   group : root
+#   perms : 0400
+#
+#   Defaults!/usr/lib64/nagios/plugins/check_team !requiretty
+#   nrpe ALL = (root) NOPASSWD: /usr/lib64/nagios/plugins/check_team
+#
+# if selinux enabled:
+#  install nrpe-selinux
+
+
+EXITCODE=0
+STATUS=OK
+STATUSMESSAGE="Yay, doing good"
+VERBOSE=true
+
+# Code that should not be altered
+if [ ${UID} -ne 0 ]
+then
+        EXITCODE=3
+        STATUS='Unknown'
+	STATUSMESSAGE="$0 should run as root"
+else
+	mdadm --detail /dev/md0 > /tmp/mdadm.stdout 2>/tmp/mdadm.stderr
+	EXITCODE=$?
+	for dev in{% for device in devices %} {{ device }}{% endfor %}{% raw  %}
+{% endraw %}
+	do
+		if ! cat /tmp/mdadm.stdout | grep -w /dev/${dev} | grep -q "active sync"
+		then
+			EXITCODE=2
+			STATUS='Critical'
+			STATUSMESSAGE='RAID member ${dev} not in active sync'
+		fi
+	done
+	if ! cat /tmp/mdadm.stdout | grep -q -w clean
+	then
+		EXITCODE=2
+		STATUS='Critical'
+		STATUSMESSAGE='Raid not clean'
+	fi
+	cat /proc/mdstat > /tmp/mdstat.stdout 2>/tmp/mdstat.stderr
+	if ! cat /tmp/mdstat.stdout | grep -q -w UUUU
+	then
+		EXITCODE=2
+		STATUS='Critical'
+		STATUSMESSAGE='Not all raid members are up'
+	fi
+fi
+
+echo "${STATUS} - ${STATUSMESSAGE}"
+if ${VERBOSE}
+then
+	echo "======================================================================"
+	echo "mdadm"
+	echo "======================================================================"
+	grep "State : " /tmp/mdadm.stdout
+	tail /tmp/mdadm.stdout
+	echo "======================================================================"
+	echo "mdstat"
+	echo "======================================================================"
+	head /tmp/mdstat.stdout
+fi
+exit ${EXITCODE}

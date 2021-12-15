@@ -1,0 +1,4 @@
+---
+# defaults file for role_nrpe_check_raid
+
+nagios_plugins_dir: /usr/lib64/nagios/plugins

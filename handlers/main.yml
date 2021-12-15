@@ -1,0 +1,7 @@
+---
+# handlers file for role_nrpe_check_raid
+
+- name: nrpe reload
+  service:
+    name: nrpe
+    state: reloaded
