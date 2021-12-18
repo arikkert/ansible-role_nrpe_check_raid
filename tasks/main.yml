@@ -16,6 +16,9 @@
     dest: /etc/nrpe.d/check_raid.cfg
     mode: 0644
   notify: nrpe reload
+- name: ensure sudo is installed
+  package:
+    name: sudo
 - name: ensure sudo rules are in place
   template:
     src: "{{ item }}.j2"
