@@ -3,6 +3,8 @@ Role Name
 
 Nagios NRPE for checking RAID
 
+Galaxy : yes
+
 Requirements
 ------------
 
