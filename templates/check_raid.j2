@@ -43,11 +43,19 @@ else
 			STATUSMESSAGE='RAID member ${dev} not in active sync'
 		fi
 	done
-	if ! cat /tmp/mdadm.stdout | grep -q -w clean
+	# TODO: always show the current state, also when not clean or active
+	if ! cat /tmp/mdadm.stdout | grep -w State | grep -q -w clean
 	then
-		EXITCODE=2
-		STATUS='Critical'
-		STATUSMESSAGE='Raid not clean'
+		if cat /tmp/mdadm.stdout | grep -w State | grep -q -w active
+		then
+			EXITCODE=1
+			STATUS='Warn'
+			STATUSMESSAGE='Raid not clean, Raid active'
+		else
+			EXITCODE=2
+			STATUS='Critical'
+			STATUSMESSAGE='Raid not clean'
+		fi
 	fi
 	cat /proc/mdstat > /tmp/mdstat.stdout 2>/tmp/mdstat.stderr
 	if ! cat /tmp/mdstat.stdout | grep -q -w UUUU
