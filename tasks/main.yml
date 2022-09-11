@@ -15,7 +15,7 @@
     src: check_raid.cfg.j2
     dest: /etc/nrpe.d/check_raid.cfg
     mode: 0644
-  notify: nrpe reload
+  notify: Handler nrpe reload
 - name: Ensure sudo is installed
   ansible.builtin.package:
     name: sudo
