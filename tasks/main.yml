@@ -1,7 +1,7 @@
 ---
 # tasks file for role_nrpe_check_raid
 
-- name: ensure check_raid is installed
+- name: Ensure check_raid is installed
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: "{{ nagios_plugins_dir }}/{{ item }}"
@@ -10,16 +10,16 @@
     mode: '0755'
   loop:
     - check_raid
-- name: ensure npre is configured
+- name: Ensure npre is configured
   ansible.builtin.template:
     src: check_raid.cfg.j2
     dest: /etc/nrpe.d/check_raid.cfg
     mode: 0644
   notify: nrpe reload
-- name: ensure sudo is installed
+- name: Ensure sudo is installed
   ansible.builtin.package:
     name: sudo
-- name: ensure sudo rules are in place
+- name: Ensure sudo rules are in place
   ansible.builtin.template:
     src: "{{ item }}.j2"
     dest: /etc/sudoers.d/{{ item }}
@@ -27,7 +27,7 @@
     validate: visudo -cf %s
   loop:
     - 20_nrpe
-- name: ensure selinux policy is applied - part 01
+- name: Ensure selinux policy is applied - part 01
   ansible.builtin.seboolean:
     name: nagios_run_sudo
     state: true
