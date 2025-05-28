@@ -14,7 +14,7 @@
   ansible.builtin.template:
     src: check_raid.cfg.j2
     dest: /etc/nrpe.d/check_raid.cfg
-    mode: 0644
+    mode: '0644'
   notify: Handler nrpe reload
 - name: Ensure sudo is installed
   ansible.builtin.package:
@@ -28,7 +28,7 @@
   loop:
     - 20_nrpe
 - name: Ensure selinux policy is applied - part 01
-  ansible.builtin.seboolean:
+  ansible.posix.seboolean:
     name: nagios_run_sudo
     state: true
     persistent: true
