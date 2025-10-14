@@ -1,5 +1,5 @@
-Role Name
-=========
+nrpe_check_raid
+===============
 
 Nagios NRPE for checking RAID
 
